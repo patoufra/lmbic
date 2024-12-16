@@ -1,0 +1,55 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+:root {
+  --color-background: #0a0a0a;
+  --color-surface: #1a1a1a;
+  --color-surface-dark: #121212;
+  --color-primary: #00ffff;
+  --color-secondary: #ff00ff;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a0a0a0;
+  --color-status-online: #00ff00;
+  --color-status-offline: #ff0000;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+}
+
+.text-primary {
+  color: var(--color-text-primary);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.bg-surface {
+  background-color: var(--color-surface);
+}
+
+.text-status-online {
+  color: var(--color-status-online);
+}
+
+.text-status-offline {
+  color: var(--color-status-offline);
+}
+
+.border-primary {
+  border-color: var(--color-primary);
+}
+
+.focus\:ring-primary:focus {
+  --tw-ring-color: var(--color-primary);
+}
+
+.bg-surface-dark {
+  background-color: var(--color-surface-dark);
+}
+
+/* Add more utility classes as needed */
+
