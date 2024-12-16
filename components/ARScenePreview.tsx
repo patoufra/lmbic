@@ -61,12 +61,8 @@ export const ARScenePreview: React.FC<ARScenePreviewProps> = ({ scene, isFullscr
       const ctx = canvas.getContext('2d')
       if (!ctx) return
 
-      // Draw the video frame
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-
-      // Apply AR overlay based on scene settings
       applyAROverlay(ctx, scene)
-
       animationFrameId = requestAnimationFrame(renderFrame)
     }
 
@@ -87,7 +83,6 @@ export const ARScenePreview: React.FC<ARScenePreviewProps> = ({ scene, isFullscr
   }, [isPlaying, scene, isCameraActive])
 
   const applyAROverlay = (ctx: CanvasRenderingContext2D, scene: ARScenePreviewProps['scene']) => {
-    // Apply patterns
     scene.patterns.forEach(pattern => {
       switch (pattern.type) {
         case 'grid':
@@ -99,11 +94,9 @@ export const ARScenePreview: React.FC<ARScenePreviewProps> = ({ scene, isFullscr
         case 'dots':
           drawDots(ctx, pattern.color, pattern.size)
           break
-        // Add more patterns as needed
       }
     })
 
-    // Apply segmentation overlay if enabled
     if (scene.segmentationSettings.enabled) {
       applySegmentationOverlay(ctx, scene.segmentationSettings.sensitivity)
     }
@@ -153,33 +146,19 @@ export const ARScenePreview: React.FC<ARScenePreviewProps> = ({ scene, isFullscr
     }
   }
 
-  const drawLines = (ctx: CanvasRenderingContext2D) => {
-    ctx.strokeStyle = 'rgba(255, 0, 255, 0.5)'
-    ctx.lineWidth = 2
-    const spacing = 40
-    for (let i = 0; i < ctx.canvas.width + ctx.canvas.height; i += spacing) {
-      ctx.beginPath()
-      ctx.moveTo(0, i)
-      ctx.lineTo(i, 0)
-      ctx.stroke()
-    }
-  }
-
   const applySegmentationOverlay = (ctx: CanvasRenderingContext2D, sensitivity: number) => {
-    // This is a placeholder for segmentation. In a real implementation,
-    // you would use your AI model to detect objects and apply overlays.
     ctx.fillStyle = `rgba(255, 0, 0, ${sensitivity * 0.5})`
     ctx.fillRect(100, 100, 200, 200)
   }
 
   return (
-    <Card className={`p-4 ${isFullscreen ? 'fixed inset-0 z-50 flex flex-col justify-center' : ''}`}>
-      <h3 className="text-lg font-semibold mb-2">Live Preview: {scene.name}</h3>
+    <Card className={`p-6 ${isFullscreen ? 'fixed inset-0 z-50 flex flex-col justify-center' : ''}`}>
+      <h3 className="text-xl font-semibold mb-4">Live Preview: {scene.name}</h3>
       <div className={`relative ${isFullscreen ? 'flex-1' : 'aspect-video'} bg-gray-800 rounded overflow-hidden`}>
         <video ref={videoRef} className="absolute inset-0 w-full h-full object-cover" muted playsInline />
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" width={640} height={360} />
       </div>
-      <div className="mt-4 flex justify-between items-center">
+      <div className="mt-6 flex justify-between items-center">
         <div>
           <Button onClick={() => setIsPlaying(!isPlaying)} className="mr-2">
             {isPlaying ? <><Pause className="mr-2" /> Pause</> : <><Play className="mr-2" /> Start</>}

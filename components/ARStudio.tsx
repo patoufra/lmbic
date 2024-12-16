@@ -1,12 +1,9 @@
 'use client'
 
 import React, { useState, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Plus, X, ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { ARScenePreview } from '@/components/ARScenePreview'
 import { PatternCreator } from '@/components/PatternCreator'
 import { ObjectSegmentation } from '@/components/ObjectSegmentation'
@@ -49,24 +46,7 @@ export const ARStudio: React.FC = () => {
     },
   ])
   const [selectedScene, setSelectedScene] = useState<ARScene | null>(null)
-  const [searchTerm, setSearchTerm] = useState('')
   const [isFullscreen, setIsFullscreen] = useState(false)
-
-  const filteredScenes = scenes.filter(scene => 
-    scene.name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
-  const handleDeleteScene = useCallback((id: string) => {
-    setScenes(prevScenes => prevScenes.filter(scene => scene.id !== id))
-    if (selectedScene?.id === id) {
-      setSelectedScene(null)
-    }
-    toast({
-      title: "Scene Deleted",
-      description: "The selected scene has been deleted.",
-      variant: "destructive",
-    })
-  }, [selectedScene, toast])
 
   const handleUpdateScene = useCallback((updatedScene: ARScene) => {
     setScenes(prevScenes => prevScenes.map(scene => scene.id === updatedScene.id ? updatedScene : scene))
@@ -79,7 +59,6 @@ export const ARStudio: React.FC = () => {
 
   const handleSaveScene = useCallback(() => {
     if (selectedScene) {
-      // In a real application, you would save the scene to a backend here
       toast({
         title: "Scene Saved",
         description: `Scene "${selectedScene.name}" has been saved.`,
@@ -110,8 +89,8 @@ export const ARStudio: React.FC = () => {
     if (selectedScene) {
       return (
         <>
-          <h2 className="text-xl font-semibold mb-4">Edit Scene: {selectedScene.name}</h2>
-          <Tabs defaultValue="preview">
+          <h2 className="text-2xl font-semibold mb-6">Edit Scene: {selectedScene.name}</h2>
+          <Tabs defaultValue="preview" className="space-y-6">
             <TabsList className="mb-4">
               <TabsTrigger value="preview">Live Preview</TabsTrigger>
               <TabsTrigger value="patterns">2D Patterns</TabsTrigger>
@@ -147,8 +126,8 @@ export const ARStudio: React.FC = () => {
             isFullscreen={isFullscreen}
             onToggleFullscreen={toggleFullscreen}
           />
-          <Button className="mt-4">
-            +New Scene from Live Feed
+          <Button className="mt-6" onClick={handleCreateScene}>
+            + New Scene from Live Feed
           </Button>
         </>
       );
@@ -156,17 +135,17 @@ export const ARStudio: React.FC = () => {
   };
 
   return (
-    <div className="h-full">
-      <div className="flex-1 p-4">
-        <div className="flex justify-between mb-4">
+    <div className={`h-full w-full ${isFullscreen ? 'fixed inset-0 z-50 bg-background' : ''} transition-all duration-300`}>
+      <div className={`w-full ${isFullscreen ? 'p-0' : ''}`}>
+        <div className={`flex justify-between items-center ${isFullscreen ? 'p-6' : 'mb-6'}`}>
           {selectedScene && (
             <Button onClick={handleSaveScene}>
-              {/* <Save className="h-4 w-4 mr-2" /> Save Scene */}
+              Save Scene
             </Button>
           )}
         </div>
 
-        <Card className={`p-4 ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
+        <Card className={`${isFullscreen ? 'rounded-none' : 'p-6'}`}>
           {renderCardContent()}
         </Card>
       </div>

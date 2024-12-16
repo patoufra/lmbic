@@ -15,6 +15,11 @@ module.exports = {
         'text-secondary': 'var(--color-text-secondary)',
         'status-online': 'var(--color-status-online)',
         'status-offline': 'var(--color-status-offline)',
+        sidebar: {
+          background: 'var(--color-sidebar-background)',
+          text: 'var(--color-sidebar-text)',
+          hoverBackground: 'var(--color-sidebar-hover-background)',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

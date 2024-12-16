@@ -3,7 +3,11 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ChevronRight } from 'lucide-react'
 
-export const Breadcrumbs: React.FC = () => {
+interface BreadcrumbsProps {
+  appName?: string;
+}
+
+export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ appName }) => {
   const pathname = usePathname()
   const pathSegments = pathname.split('/').filter(segment => segment !== '')
 
@@ -17,11 +21,14 @@ export const Breadcrumbs: React.FC = () => {
         </li>
         {pathSegments.map((segment, index) => {
           const href = `/${pathSegments.slice(0, index + 1).join('/')}`
+          const isLastSegment = index === pathSegments.length - 1
+          const segmentName = isLastSegment && appName ? appName : segment.replace('-', ' ')
+
           return (
             <li key={segment} className="flex items-center">
               <ChevronRight className="h-4 w-4 mx-2" />
               <Link href={href} className="text-primary hover:underline capitalize">
-                {segment.replace('-', ' ')}
+                {segmentName}
               </Link>
             </li>
           )

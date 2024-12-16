@@ -10,14 +10,16 @@ export default function AppPage({ params }: { params: { id: string } }) {
   const { closeSidebar } = useSidebar()
 
   useEffect(() => {
-    closeSidebar()
+    if (window.innerWidth < 768) {
+      closeSidebar()
+    }
   }, [closeSidebar])
 
   // In a real app, you'd fetch the app details based on the ID
-  const appName = params.id === '1' ? 'AR Studio' : 'App'
+  const appName = params.id === '1' ? 'AR Studio' : `App ${params.id}`
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="w-full">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">{appName}</h1>
         <Link href="/apps" passHref>

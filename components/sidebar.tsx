@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Settings, Code, Users, Layers, Zap, Grid } from 'lucide-react'
+import { Home, Settings, Code, Users, Layers, Zap, Grid, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useSidebar } from '@/contexts/SidebarContext'
-import { motion } from 'framer-motion'
+import { theme } from '@/styles/theme'
+import { Button } from '@/components/ui/button'
 
 const navItems = [
   { name: 'Dashboard', href: '/', icon: Home },
@@ -17,35 +18,44 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname()
-  const { isOpen } = useSidebar()
+  const { isOpen, toggleSidebar, sidebarWidth } = useSidebar()
 
   return (
-    <motion.nav 
-      className="bg-surface overflow-hidden"
-      initial={{ width: 256 }}
-      animate={{ width: isOpen ? 256 : 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="w-64 p-4">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-primary" style={{ fontFamily: 'Montserrat' }}>LimbicLight</h1>
+    <>
+      <div 
+        className={`h-full shadow-lg flex-shrink-0 overflow-y-auto transition-all duration-300 ease-in-out bg-background ${isOpen ? 'w-64' : 'w-0'}`}
+        style={{ backgroundColor: theme.colors.background }}
+      >
+        <div className="p-6">
+          <h1 className="text-2xl font-bold mb-8" style={{ color: theme.colors.primary }}>Lmbic</h1>
+          <ul className="space-y-2">
+            {navItems.map((item) => (
+              <li key={item.name}>
+                <Link href={item.href} passHref>
+                  <span className={`flex items-center p-2 rounded-md transition-colors ${
+                    pathname === item.href 
+                      ? `bg-primary bg-opacity-20 text-white` 
+                      : `text-sidebar-text hover:bg-sidebar-hoverBackground hover:text-primary`
+                  }`}>
+                    <item.icon className="mr-3 h-5 w-5" />
+                    {item.name}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
-        <ul>
-          {navItems.map((item) => (
-            <li key={item.name} className="mb-2">
-              <Link href={item.href} passHref>
-                <span className={`flex items-center p-2 rounded-md transition-colors ${
-                  pathname === item.href ? 'bg-primary bg-opacity-20 text-primary' : 'text-text-secondary hover:bg-primary hover:bg-opacity-10 hover:text-primary'
-                }`}>
-                  <item.icon className="mr-3 h-5 w-5" />
-                  {item.name}
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
       </div>
-    </motion.nav>
+      <Button
+        onClick={toggleSidebar}
+        className={`fixed top-4 z-50 p-2 bg-primary text-background rounded-full transition-all duration-300 ${
+          isOpen ? 'left-[232px]' : 'left-4'
+        }`}
+        size="icon"
+      >
+        {isOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+      </Button>
+    </>
   )
 }
 

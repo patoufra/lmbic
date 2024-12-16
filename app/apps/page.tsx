@@ -36,8 +36,7 @@ export default function Apps() {
   const availableApps = filteredApps.filter(app => app.status === 'available')
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Apps</h1>
+    <div className="w-full container mx-auto px-4 py-8">
       
       <div className="mb-6">
         <div className="relative">

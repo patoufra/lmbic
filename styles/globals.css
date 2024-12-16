@@ -3,7 +3,7 @@
 @import 'tailwindcss/utilities';
 
 :root {
-  --color-background: #0a0a0a;
+  --color-background: #0a0a0c;
   --color-surface: #1a1a1a;
   --color-surface-dark: #121212;
   --color-primary: #00ffff;
@@ -12,6 +12,9 @@
   --color-text-secondary: #a0a0a0;
   --color-status-online: #00ff00;
   --color-status-offline: #ff0000;
+  --color-sidebar-background: #0a0a0c;
+  --color-sidebar-text: #ffffff;
+  --color-sidebar-hover-background: #1a1a1e;
 }
 
 body {
@@ -51,5 +54,27 @@ body {
   background-color: var(--color-surface-dark);
 }
 
-/* Add more utility classes as needed */
+.bg-sidebar {
+  background-color: var(--color-sidebar-background);
+}
+
+.text-sidebar-text {
+  color: var(--color-sidebar-text);
+}
+
+.hover\:bg-sidebar-hoverBackground:hover {
+  background-color: var(--color-sidebar-hover-background);
+}
+
+/* Add smooth transitions for sidebar and main content */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Ensure content adjusts smoothly with sidebar */
+.flex-1 {
+  transition: margin-left 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
 
