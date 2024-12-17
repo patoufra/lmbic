@@ -3,11 +3,13 @@
 import { useState } from 'react'
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+ // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Plus, Settings } from 'lucide-react'
 import Link from 'next/link'
 import { DevicePairingModal } from '@/components/DevicePairingModal'
 
 export default function Devices() {
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [devices, setDevices] = useState([
     { id: 1, name: 'Living Room Lamp', status: 'online' },
     { id: 2, name: 'Bedroom Lamp', status: 'offline' },

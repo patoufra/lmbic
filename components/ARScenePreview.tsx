@@ -1,155 +1,161 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Play, Pause, Camera, Maximize, Minimize } from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react';
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Play, Pause, Camera, Maximize, Minimize } from 'lucide-react';
+
+interface Pattern {
+  id: string;
+  type: string;
+  color: string;
+  size: number;
+}
+
+interface SegmentationSettings {
+  enabled: boolean;
+  sensitivity: number;
+}
+
+interface Scene {
+  name: string;
+  patterns: Pattern[];
+  segmentationSettings: SegmentationSettings;
+}
 
 interface ARScenePreviewProps {
-  scene: {
-    name: string
-    patterns: Array<{
-      id: string
-      type: string
-      color: string
-      size: number
-    }>
-    segmentationSettings: {
-      enabled: boolean
-      sensitivity: number
-    }
-  }
-  isFullscreen: boolean
-  onToggleFullscreen: () => void
+  scene: Scene;
+  isFullscreen: boolean;
+  onToggleFullscreen: () => void;
 }
 
 export const ARScenePreview: React.FC<ARScenePreviewProps> = ({ scene, isFullscreen, onToggleFullscreen }) => {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [isCameraActive, setIsCameraActive] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isCameraActive, setIsCameraActive] = useState(false);
 
   useEffect(() => {
-    const video = videoRef.current
-    const canvas = canvasRef.current
-    if (!video || !canvas) return
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return;
 
-    let animationFrameId: number
+    let animationFrameId: number;
 
     const startStream = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true })
-        video.srcObject = stream
-        await video.play()
-        setIsPlaying(true)
-        setIsCameraActive(true)
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        await video.play();
+        setIsPlaying(true);
+        setIsCameraActive(true);
       } catch (err) {
-        console.error("Error accessing camera:", err)
+        console.error("Error accessing camera:", err);
       }
-    }
+    };
 
     const stopStream = () => {
-      const stream = video.srcObject as MediaStream
+      const stream = video.srcObject as MediaStream;
       if (stream) {
-        stream.getTracks().forEach(track => track.stop())
+        stream.getTracks().forEach(track => track.stop());
       }
-      video.srcObject = null
-      setIsPlaying(false)
-      setIsCameraActive(false)
-    }
+      video.srcObject = null;
+      setIsPlaying(false);
+      setIsCameraActive(false);
+    };
 
     const renderFrame = () => {
-      if (!video || !canvas) return
-      const ctx = canvas.getContext('2d')
-      if (!ctx) return
+      if (!video || !canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
 
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-      applyAROverlay(ctx, scene)
-      animationFrameId = requestAnimationFrame(renderFrame)
-    }
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      applyAROverlay(ctx, scene);
+      animationFrameId = requestAnimationFrame(renderFrame);
+    };
 
     if (isPlaying) {
       if (!isCameraActive) {
-        startStream()
+        startStream();
       }
-      renderFrame()
+      renderFrame();
     } else {
-      stopStream()
-      cancelAnimationFrame(animationFrameId)
+      stopStream();
+      cancelAnimationFrame(animationFrameId);
     }
 
     return () => {
-      stopStream()
-      cancelAnimationFrame(animationFrameId)
-    }
-  }, [isPlaying, scene, isCameraActive])
+      stopStream();
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [isPlaying, scene, isCameraActive]);
 
   const applyAROverlay = (ctx: CanvasRenderingContext2D, scene: ARScenePreviewProps['scene']) => {
     scene.patterns.forEach(pattern => {
       switch (pattern.type) {
         case 'grid':
-          drawGrid(ctx, pattern.color, pattern.size)
-          break
+          drawGrid(ctx, pattern.color, pattern.size);
+          break;
         case 'circles':
-          drawCircles(ctx, pattern.color, pattern.size)
-          break
+          drawCircles(ctx, pattern.color, pattern.size);
+          break;
         case 'dots':
-          drawDots(ctx, pattern.color, pattern.size)
-          break
+          drawDots(ctx, pattern.color, pattern.size);
+          break;
       }
-    })
+    });
 
     if (scene.segmentationSettings.enabled) {
-      applySegmentationOverlay(ctx, scene.segmentationSettings.sensitivity)
+      applySegmentationOverlay(ctx, scene.segmentationSettings.sensitivity);
     }
-  }
+  };
 
   const drawGrid = (ctx: CanvasRenderingContext2D, color: string, size: number) => {
-    ctx.strokeStyle = color
-    ctx.lineWidth = 1
-    const gridSize = size
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    const gridSize = size;
     for (let x = 0; x < ctx.canvas.width; x += gridSize) {
-      ctx.beginPath()
-      ctx.moveTo(x, 0)
-      ctx.lineTo(x, ctx.canvas.height)
-      ctx.stroke()
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, ctx.canvas.height);
+      ctx.stroke();
     }
     for (let y = 0; y < ctx.canvas.height; y += gridSize) {
-      ctx.beginPath()
-      ctx.moveTo(0, y)
-      ctx.lineTo(ctx.canvas.width, y)
-      ctx.stroke()
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(ctx.canvas.width, y);
+      ctx.stroke();
     }
-  }
+  };
 
   const drawCircles = (ctx: CanvasRenderingContext2D, color: string, size: number) => {
-    ctx.strokeStyle = color
-    ctx.lineWidth = 2
-    const circleRadius = size / 2
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    const circleRadius = size / 2;
     for (let x = circleRadius; x < ctx.canvas.width; x += size) {
       for (let y = circleRadius; y < ctx.canvas.height; y += size) {
-        ctx.beginPath()
-        ctx.arc(x, y, circleRadius, 0, Math.PI * 2)
-        ctx.stroke()
+        ctx.beginPath();
+        ctx.arc(x, y, circleRadius, 0, Math.PI * 2);
+        ctx.stroke();
       }
     }
-  }
+  };
 
   const drawDots = (ctx: CanvasRenderingContext2D, color: string, size: number) => {
-    ctx.fillStyle = color
-    const dotSize = size / 5
-    const spacing = size
+    ctx.fillStyle = color;
+    const dotSize = size / 5;
+    const spacing = size;
     for (let x = spacing; x < ctx.canvas.width; x += spacing) {
       for (let y = spacing; y < ctx.canvas.height; y += spacing) {
-        ctx.beginPath()
-        ctx.arc(x, y, dotSize, 0, Math.PI * 2)
-        ctx.fill()
+        ctx.beginPath();
+        ctx.arc(x, y, dotSize, 0, Math.PI * 2);
+        ctx.fill();
       }
     }
-  }
+  };
 
   const applySegmentationOverlay = (ctx: CanvasRenderingContext2D, sensitivity: number) => {
-    ctx.fillStyle = `rgba(255, 0, 0, ${sensitivity * 0.5})`
-    ctx.fillRect(100, 100, 200, 200)
-  }
+    ctx.fillStyle = `rgba(255, 0, 0, ${sensitivity * 0.5})`;
+    ctx.fillRect(100, 100, 200, 200);
+  };
 
   return (
     <Card className={`p-6 ${isFullscreen ? 'fixed inset-0 z-50 flex flex-col justify-center' : ''}`}>
@@ -180,6 +186,8 @@ export const ARScenePreview: React.FC<ARScenePreviewProps> = ({ scene, isFullscr
         )}
       </div>
     </Card>
-  )
-}
+  );
+};
+
+export default ARScenePreview;
 

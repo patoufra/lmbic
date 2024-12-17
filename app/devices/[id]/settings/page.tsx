@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { use } from 'react'; // Import React.use
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -9,25 +10,35 @@ import { Toaster } from "@/components/ui/toaster"
 import { ColorSlider } from "@/components/ColorSlider"
 import { theme } from "@/styles/theme"
 
-interface DeviceSettings {
-  id: string
-  name: string
-  brightness: number
-  color: { r: number; g: number; b: number }
-  arMode: boolean
-  motionDetection: boolean
-  status: 'online' | 'offline'
-  lastSeen: string
-  firmwareVersion: string
-  latestFirmwareVersion: string
+interface Params {
+  id: string;
 }
 
-export default function DeviceSettings({ params }: { params: { id: string } }) {
+interface Device {
+  id: string;
+  name: string;
+  status: string;
+  firmwareVersion: string;
+  latestFirmwareVersion: string;
+}
+
+interface PageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+
+
+export default function DeviceSettings({ params }: PageProps) {
   const { toast } = useToast()
-  const [device, setDevice] = useState<DeviceSettings | null>(null)
+  const [device, setDevice] = useState<Device | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [hasChanges, setHasChanges] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
+
+  // Unwrap the params Promise using React.use
+  const unwrappedParams = use(params);  // Add this line
 
   useEffect(() => {
     const fetchDevice = async () => {
@@ -35,28 +46,50 @@ export default function DeviceSettings({ params }: { params: { id: string } }) {
       // Simulating API call
       await new Promise(resolve => setTimeout(resolve, 1000))
       setDevice({
-        id: params.id,
+        id: unwrappedParams.id,
         name: 'Living Room Lamp',
-        brightness: 80,
-        color: { r: 255, g: 0, b: 0 }, // Default to red
-        arMode: true,
-        motionDetection: false,
         status: 'online',
-        lastSeen: new Date().toISOString(),
         firmwareVersion: '1.2.3',
         latestFirmwareVersion: '1.2.4',
+        brightness: 50, // Default brightness
+        color: { r: 255, g: 255, b: 255 }, // Default color (white)
+        arMode: false, // Default AR Mode
+        motionDetection: false, // Default Motion Detection
       })
       setIsLoading(false)
     }
     fetchDevice()
-  }, [params.id])
+  }, [unwrappedParams.id])
 
+  
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSettingChange = (setting: string, value: any) => {
-    if (device) {
-      setDevice({ ...device, [setting]: value })
-      setHasChanges(true)
-    }
-  }
+    setDevice((prevDevice) => {
+      const safeDevice = prevDevice ?? {
+        id: '',
+        name: '',
+        status: '',
+        firmwareVersion: '',
+        latestFirmwareVersion: '',
+        brightness: 50,
+        color: { r: 0, g: 0, b: 0 },
+      };
+  
+      if (setting === 'color') {
+        const updatedColor = value && typeof value === 'object'
+          ? { r: value.r ?? 0, g: value.g ?? 0, b: value.b ?? 0 }
+          : { r: 0, g: 0, b: 0 };
+  
+        return { ...safeDevice, color: updatedColor };
+      }
+  
+      return { ...safeDevice, [setting]: value };
+    });
+  
+    setHasChanges(true);
+  };
+  
 
   const handleSaveChanges = async () => {
     if (device) {
@@ -86,6 +119,7 @@ export default function DeviceSettings({ params }: { params: { id: string } }) {
       })
     }
   }
+
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>
@@ -137,8 +171,13 @@ export default function DeviceSettings({ params }: { params: { id: string } }) {
           <div className="mb-4">
             <label className="block text-sm font-medium text-secondary mb-1">Color</label>
             <ColorSlider
-              value={device.color}
-              onChange={(value) => handleSettingChange('color', value)}
+            value={device?.color ?? { r: 0, g: 0, b: 0 }} // Fallback if device.color is undefined
+            onChange={(value) => {
+              console.log('ColorSlider value:', value);
+              if (value && typeof value === 'object') {
+                handleSettingChange('color', value);
+              }
+            }}
             />
             <div className="flex justify-between mt-1">
               <span className="text-primary">RGB: {device.color.r}, {device.color.g}, {device.color.b}</span>

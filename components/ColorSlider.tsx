@@ -11,13 +11,18 @@ export const ColorSlider: React.FC<ColorSliderProps> = ({ value, onChange }) => 
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
-    updateColor(e);
+    updateColor(e.clientX);
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
-    if (isDragging) {
-      updateColor(e);
-    }
+  const handleMouseMove = (event: MouseEvent | TouchEvent) => {
+    if (!isDragging) return;
+
+    const clientX =
+      'clientX' in event
+        ? event.clientX
+        : event.touches?.[0]?.clientX ?? 0;
+
+    updateColor(clientX);
   };
 
   const handleMouseUp = () => {
@@ -33,16 +38,16 @@ export const ColorSlider: React.FC<ColorSliderProps> = ({ value, onChange }) => 
     };
   }, [isDragging]);
 
-  const updateColor = (e: React.MouseEvent | MouseEvent) => {
-    if (sliderRef.current) {
-      const rect = sliderRef.current.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const percentage = Math.max(0, Math.min(1, x / rect.width));
-      
-      // Convert percentage to RGB
-      const rgb = percentageToRGB(percentage);
-      onChange(rgb);
-    }
+  const updateColor = (clientX: number) => {
+    if (!sliderRef.current) return;
+
+    const rect = sliderRef.current.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, x / rect.width));
+
+    // Convert percentage to RGB
+    const rgb = percentageToRGB(percentage);
+    onChange(rgb);
   };
 
   const percentageToRGB = (percentage: number): { r: number; g: number; b: number } => {
@@ -69,20 +74,19 @@ export const ColorSlider: React.FC<ColorSliderProps> = ({ value, onChange }) => 
   const percentage = rgbToPercentage(value);
 
   return (
-    <div 
+    <div
       ref={sliderRef}
       className="relative w-full h-8 cursor-pointer"
       onMouseDown={handleMouseDown}
     >
-      <div 
+      <div
         className="absolute w-full h-full rounded-full"
         style={{ background: getBackgroundStyle() }}
       />
-      <div 
+      <div
         className="absolute w-4 h-8 bg-white rounded-full shadow-md"
         style={{ left: `calc(${percentage * 100}% - 8px)` }}
       />
     </div>
   );
 };
-

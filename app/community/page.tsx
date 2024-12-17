@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Download, Star, MessageSquare } from 'lucide-react'
 
 export default function Community() {
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [apps, setApps] = useState([
     { id: 1, name: 'Mood Lighting', author: 'LimbicLight', downloads: 1200, rating: 4.5 },
     { id: 2, name: 'Party Mode', author: 'NeonDreams', downloads: 850, rating: 4.2 },

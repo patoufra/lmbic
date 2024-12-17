@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+ // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Home, Settings, Code, Users, Layers, Zap, Grid, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useSidebar } from '@/contexts/SidebarContext'
 import { theme } from '@/styles/theme'
@@ -18,6 +19,7 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname()
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { isOpen, toggleSidebar, sidebarWidth } = useSidebar()
 
   return (

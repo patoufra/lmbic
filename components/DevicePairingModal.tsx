@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+ // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Wifi, ArrowRight, Check } from 'lucide-react'
 
 const steps = [

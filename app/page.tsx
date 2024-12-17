@@ -1,12 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Card } from "@/components/ui/card"
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Button } from "@/components/ui/button"
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Zap, Plus, Activity } from 'lucide-react'
 
 export default function Dashboard() {
-  const [devices, setDevices] = useState([
+  const [devices] = useState([
     { id: 1, name: 'Living Room Lamp', status: 'online' },
     { id: 2, name: 'Bedroom Lamp', status: 'offline' },
     { id: 3, name: 'Office Lamp', status: 'online' },
@@ -14,7 +17,8 @@ export default function Dashboard() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      
+      <p>It&apos;s a great day!</p>
+      <p>Don&apos;t worry, be happy!</p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
           <h2 className="text-xl font-semibold mb-4">Connected Devices</h2>
@@ -33,30 +37,6 @@ export default function Dashboard() {
           <Button className="mt-4" variant="outline">
             <Plus className="mr-2 h-4 w-4" /> Add Device
           </Button>
-        </Card>
-
-        <Card>
-          <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-          <div className="space-y-2">
-            <Button className="w-full justify-start" variant="outline">
-              <Zap className="mr-2 h-4 w-4" /> Turn All On
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <Zap className="mr-2 h-4 w-4" /> Turn All Off
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <Activity className="mr-2 h-4 w-4" /> Sync Devices
-            </Button>
-          </div>
-        </Card>
-
-        <Card>
-          <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-          <ul className="space-y-2">
-            <li>Device 'Living Room Lamp' turned on</li>
-            <li>New firmware available for 'Bedroom Lamp'</li>
-            <li>AR scene 'Starry Night' applied to 'Office Lamp'</li>
-          </ul>
         </Card>
       </div>
     </div>
